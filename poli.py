@@ -29,16 +29,45 @@ class Edge:
         self.point2 = point2
 
 
+class Triangle:
+    def __init__(self, point1, point2, point3):
+        self.point1 = point1
+        self.point2 = point2
+        self.point3 = point3
+
+
+        
+
+        
 def computeVerticesTransformation():
     plane = 5  # defines distance between camera and screen-plane
-    for v in vertices:
-        x = (camera.x - v.x)/((-camera.z + v.z + 100) * 0.001)
-        y = (camera.y - v.y)/((-camera.z + v.z + 100) * 0.001)
+    # for v in vertices:
+    #     x = (camera.x - v.x)/((-camera.z + v.z + 100) * 0.001)
+    #     y = (camera.y - v.y)/((-camera.z + v.z + 100) * 0.001)
 
-        p = Point2D(v.id, x, y)
-        vertices2D.append(p)
+    #     p = Point2D(v.id, x, y)
+    #     vertices2D.append(p)
         # canvas.create_oval(w-x, h+y, w-x, h+y, width=4, outline="#F64C72")
+    vertices2D.clear()
+    edges.clear()
+    for t in triangles:
+        vs = []
+        vs.append(Point2D.getById(t.point1, vertices))
+        vs.append(Point2D.getById(t.point2, vertices))
+        vs.append(Point2D.getById(t.point3, vertices))        
+        for v in vs:
+            x = (camera.x - v.x)/((-camera.z + v.z + 100) * 0.001)
+            y = (camera.y - v.y)/((-camera.z + v.z + 100) * 0.001)
+            p = Point2D(v.id, x, y)
+            vertices2D.append(p)
 
+
+        edges.append(Edge(t.point1, t.point2))
+        edges.append(Edge(t.point1, t.point3))
+        edges.append(Edge(t.point2, t.point3))
+
+
+        
 
 def drawEdges():
     for e in edges:
@@ -134,14 +163,18 @@ if __name__ == '__main__':
     vertices = [ origin ]
     edges = [ ]
     vertices2D = []
+    triangles = []
 
     for id, x, y, z in cube.points:
         vertices.append(Point(id, x, y, z))
 
-    for a, b in cube.edges:
-        edges.append(Edge(a, b))
+#    for a, b in cube.edges:
+#        edges.append(Edge(a, b))
 
+    for a, b, c in cube.triangles:
+        triangles.append(Triangle(a, b, c))
 
     animateRotation()
+#    computeVerticesTransformation()
         
     root.mainloop()
