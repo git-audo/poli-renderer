@@ -36,45 +36,33 @@ class Triangle:
         self.point3 = point3
 
 
-        
-
-        
 def computeVerticesTransformation():
-    plane = 5  # defines distance between camera and screen-plane
-    # for v in vertices:
-    #     x = (camera.x - v.x)/((-camera.z + v.z + 100) * 0.001)
-    #     y = (camera.y - v.y)/((-camera.z + v.z + 100) * 0.001)
-
-    #     p = Point2D(v.id, x, y)
-    #     vertices2D.append(p)
-        # canvas.create_oval(w-x, h+y, w-x, h+y, width=4, outline="#F64C72")
     vertices2D.clear()
     edges.clear()
     for t in triangles:
-        vs = []
-        vs.append(Point2D.getById(t.point1, vertices))
-        vs.append(Point2D.getById(t.point2, vertices))
-        vs.append(Point2D.getById(t.point3, vertices))        
-        for v in vs:
+        triangleVertices = []
+        triangleVertices.append(Point2D.getById(t.point1, vertices))
+        triangleVertices.append(Point2D.getById(t.point2, vertices))
+        triangleVertices.append(Point2D.getById(t.point3, vertices))
+        
+        for v in triangleVertices:
             x = (camera.x - v.x)/((-camera.z + v.z + 100) * 0.001)
             y = (camera.y - v.y)/((-camera.z + v.z + 100) * 0.001)
             p = Point2D(v.id, x, y)
             vertices2D.append(p)
-
+            # canvas.create_oval(w-x, h+y, w-x, h+y, width=4, outline="#F64C72")                    
 
         edges.append(Edge(t.point1, t.point2))
         edges.append(Edge(t.point1, t.point3))
         edges.append(Edge(t.point2, t.point3))
 
 
-        
-
 def drawEdges():
     for e in edges:
         p1 = Point2D.getById(e.point1, vertices2D)
         p2 = Point2D.getById(e.point2, vertices2D)
         canvas.create_line(w-p1.x, h+p1.y, w-p2.x, h+p2.y, fill="#F64C72")
-        
+
 
 def drawTop():
     # draw origin and camera
@@ -105,37 +93,10 @@ def rotate():
         v.y = math.cos(modelRotateX)*v.y + math.sin(modelRotateX)*v.z
         v.z = -math.sin(modelRotateX)*y + math.cos(modelRotateX)*v.z
 
-    
-def frame():
-#    camera.right()
-    rotate()
-    canvas.delete("all")
-    vertices2D.clear()
-    computeVerticesTransformation()
-    drawEdges()
-    if camera.x > 110:
-        canvas.after(20, left)
-    else:
-        canvas.after(20, frame)
-
-        
-def left():
-#    camera.left()
-    rotate()    
-    canvas.delete("all")
-    vertices2D.clear()
-    computeVerticesTransformation()
-    drawEdges()
-    if camera.x < 20:
-        canvas.after(20, frame)
-    else:
-        canvas.after(20, left)
-
 
 def animateRotation():
     rotate()
     canvas.delete("all")
-    vertices2D.clear()
     computeVerticesTransformation()
     drawEdges()
     canvas.after(20, animateRotation)
@@ -161,20 +122,17 @@ if __name__ == '__main__':
     oz = Edge(origin.id, zVersor.id)
     
     vertices = [ origin ]
-    edges = [ ]
     vertices2D = []
-    triangles = []
+    triangles = []    
+    edges = []
 
     for id, x, y, z in cube.points:
         vertices.append(Point(id, x, y, z))
-
-#    for a, b in cube.edges:
-#        edges.append(Edge(a, b))
 
     for a, b, c in cube.triangles:
         triangles.append(Triangle(a, b, c))
 
     animateRotation()
-#    computeVerticesTransformation()
         
     root.mainloop()
+    
