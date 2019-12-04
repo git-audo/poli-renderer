@@ -61,7 +61,7 @@ def drawEdges():
     for e in edges:
         p1 = Point2D.getById(e.point1, vertices2D)
         p2 = Point2D.getById(e.point2, vertices2D)
-        canvas.create_line(w-p1.x, h+p1.y, w-p2.x, h+p2.y, fill="#F64C72")
+        canvas.create_line(w-p1.x, h+p1.y, w-p2.x, h+p2.y, fill="#F64C72", width=2.5)
 
 
 def drawTop():
@@ -110,7 +110,7 @@ if __name__ == '__main__':
     canvas = Canvas(root, width=1200, height=600, bg="#282828")
     canvas.pack()
 
-    camX = 80 ; camY = -50 ; camZ = -130
+    camX = 90 ; camY = -50 ; camZ = -130
     camera = camera.Camera(camX, camY, camZ)
 
     origin = Point(0, 0, 0, 0)
