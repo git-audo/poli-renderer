@@ -5,21 +5,10 @@ class Camera:
         self.y = y
         self.z = z
 
-    def forward(self):
-        self.z += 2
-
-    def backward(self):
-        self.z -= 2
-
-    def left(self):
-        self.x -= 0.5
-
-    def right(self):
-        self.x += 0.5
-
-    def up(self):
-        self.y += 0.5
-
-    def down(self):
-        self.y -= 0.5
-
+    def move(self, direction, delta=0.5):
+        if direction == 'x':
+            self.x += delta
+        elif direction == 'y':
+            self.y += delta
+        elif direction == 'z':
+            self.z += delta
