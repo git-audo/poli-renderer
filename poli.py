@@ -1,40 +1,9 @@
 #!/usr/bin/python3.7
 
 from tkinter import *
-import cube, camera, time, math
-
-class Point2D:
-    def __init__(self, id, x, y):
-        self.id = id
-        self.x = x
-        self.y = y
-
-    def getById(id, points):
-        point = [ p for p in points if p.id == id ]
-        return point[0]
-
-    
-class Point(Point2D):
-    def __init__(self, id, a, b, c):
-        Point2D.__init__(self, id, a, b)
-        self.z = c
-    
-    def coordinates(self):
-        print(self.x, self.y, self.z)
-        
-        
-class Edge:
-    def __init__(self, point1, point2):
-        self.point1 = point1
-        self.point2 = point2
-
-
-class Triangle:
-    def __init__(self, point1, point2, point3):
-        self.point1 = point1
-        self.point2 = point2
-        self.point3 = point3
-
+from models import cube
+import camera, geometry, time, math
+from geometry import Point2D, Point, Edge, Triangle
 
 def computeVerticesTransformation():
     vertices2D.clear()
@@ -62,22 +31,6 @@ def drawEdges():
         p1 = Point2D.getById(e.point1, vertices2D)
         p2 = Point2D.getById(e.point2, vertices2D)
         canvas.create_line(w-p1.x, h+p1.y, w-p2.x, h+p2.y, fill="#F64C72", width=2.5)
-
-
-def drawTop():
-    # draw origin and camera
-    canvas.create_oval(w, h, w, h, width=5, outline="#F64C72")
-    canvas.create_oval(w+camX, h+camZ , w+camX, h+camZ, width=10, outline="white")
-    canvas.create_line(0, 0, 0, 500, fill="green") 
-
-    for v in vertices:
-        canvas.create_oval(w+v.x, h+v.z, w+v.x, h+v.z, width=5, outline="#F64C72")
-    for e in edges:
-        id1 = e.point1
-        id2 = e.point2
-        p1 = Point2D.getById(id1, vertices)
-        p2 = Point2D.getById(id2, vertices)
-        canvas.create_line(w+p1.x, h+p1.y, w+p2.x, h+p2.y, fill="#F64C72")
 
 
 def rotate():
