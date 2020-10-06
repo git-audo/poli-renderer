@@ -1,3 +1,4 @@
+import math
 
 class Point2D:
     def __init__(self, id, x, y):
@@ -30,3 +31,17 @@ class Triangle:
         self.point1 = point1
         self.point2 = point2
         self.point3 = point3
+
+
+def rotate(modelRotateY, modelRotateX, vertices):
+    for v in vertices:
+        x = v.x
+        y = v.y
+        
+        v.x = math.cos(modelRotateY)*v.x + math.sin(modelRotateY)*v.z 
+        v.z = -math.sin(modelRotateY)*x + math.cos(modelRotateY)*v.z
+
+        v.y = math.cos(modelRotateX)*v.y + math.sin(modelRotateX)*v.z
+        v.z = -math.sin(modelRotateX)*y + math.cos(modelRotateX)*v.z
+
+

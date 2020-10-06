@@ -2,8 +2,8 @@
 
 from tkinter import *
 from models import cube
-import camera, geometry, time, math
-from geometry import Point2D, Point, Edge, Triangle
+import camera, time, math
+from geometry import Point2D, Point, Edge, Triangle, rotate
 
 def computeVerticesTransformation():
     vertices2D.clear()
@@ -26,6 +26,31 @@ def computeVerticesTransformation():
         edges.append(Edge(t.point2, t.point3))
 
 
+def rasterize():
+    for t in triangles:
+        triangleVertices = []
+        triangleVertices.append(Point2D.getById(t.point1, vertices))
+        triangleVertices.append(Point2D.getById(t.point2, vertices))
+        triangleVertices.append(Point2D.getById(t.point3, vertices))
+
+        top = Point2D('top', 0, -999)
+        low1 = Point2D('low', 0, 999)
+        low2 = Point2D('low', 0, 999)        
+        for v in vertices2D:
+            if v.id == t.point1 or v.id == t.point2 or v.id == t.point3:
+                if v.y > top.y:
+                    top = v
+                elif v.y < low1.y and low1.y == 999:
+                    low1 = v
+                elif v.y < low2.y:
+                    low2 = v
+
+
+        half = Point2D('half', top.x, math.floor((low1.y + low2.y)/2))
+        canvas.create_line(w-top.x, h+top.y, w-half.x, h+half.y, fill="#F6aa72", width=2.5)        
+
+        
+    
 def drawEdges():
     for e in edges:
         p1 = Point2D.getById(e.point1, vertices2D)
@@ -33,26 +58,26 @@ def drawEdges():
         canvas.create_line(w-p1.x, h+p1.y, w-p2.x, h+p2.y, fill="#F64C72", width=2.5)
 
 
-def rotate():
-    modelRotateY = 0.008
-    modelRotateX = 0.002    
-    for v in vertices:
-        x = v.x
-        y = v.y
-        
-        v.x = math.cos(modelRotateY)*v.x + math.sin(modelRotateY)*v.z 
-        v.z = -math.sin(modelRotateY)*x + math.cos(modelRotateY)*v.z
-
-        v.y = math.cos(modelRotateX)*v.y + math.sin(modelRotateX)*v.z
-        v.z = -math.sin(modelRotateX)*y + math.cos(modelRotateX)*v.z
-
-
-def animateRotation():
-    rotate()
+def drawFrame():
     canvas.delete("all")
-    computeVerticesTransformation()
+    computeVerticesTransformation()    
     drawEdges()
+    rasterize()
+    
+        
+def animateRotation():
+    rotate(0.008, 0.002, vertices)
+    drawFrame()
     canvas.after(20, animateRotation)
+
+
+def loadModel():
+    for id, x, y, z in cube.points:
+        vertices.append(Point(id, x, y, z))
+
+    for a, b, c in cube.triangles:
+        triangles.append(Triangle(a, b, c))
+    
 
 
 if __name__ == '__main__':
@@ -76,15 +101,10 @@ if __name__ == '__main__':
     
     vertices = [ origin ]
     vertices2D = []
-    triangles = []    
+    triangles = []
     edges = []
 
-    for id, x, y, z in cube.points:
-        vertices.append(Point(id, x, y, z))
-
-    for a, b, c in cube.triangles:
-        triangles.append(Triangle(a, b, c))
-
+    loadModel()
     animateRotation()
         
     root.mainloop()
