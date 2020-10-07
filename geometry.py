@@ -33,19 +33,18 @@ class Triangle:
         self.point3 = point3
 
 
-def rotate(modelRotateY, modelRotateX, vertices):
-    for v in vertices:
-        x = v.x
-        y = v.y
-        
-        v.x = math.cos(modelRotateY)*v.x + math.sin(modelRotateY)*v.z 
-        v.z = -math.sin(modelRotateY)*x + math.cos(modelRotateY)*v.z
-
-        v.y = math.cos(modelRotateX)*v.y + math.sin(modelRotateX)*v.z
-        v.z = -math.sin(modelRotateX)*y + math.cos(modelRotateX)*v.z
-
-
-def rotatet(triangles):
+def rotate(triangles):
+    modelRotateY = 0.002
+    modelRotateX = 0.004
     for t in triangles:
         for v in t:
-            print(v)
+            x = v[0]
+            y = v[1]
+            
+            v[0] = math.cos(modelRotateY)*v[0] + math.sin(modelRotateY)*v[2] 
+            v[2] = -math.sin(modelRotateY)*x + math.cos(modelRotateY)*v[2]
+            
+            v[1] = math.cos(modelRotateX)*v[1] + math.sin(modelRotateX)*v[2]
+            v[2] = -math.sin(modelRotateX)*y + math.cos(modelRotateX)*v[2]
+
+            

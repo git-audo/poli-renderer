@@ -4,9 +4,11 @@ from tkinter import *
 from models import cube
 from models.cube import n_triangles
 import camera, time, math
-from geometry import Point2D, Point, Edge, Triangle, rotate, rotatet
+from geometry import Point2D, Point, Edge, Triangle, rotate
 from numpy import arange
 
+
+# unused
 def computeVerticesTransformation():
     vertices2D.clear()
     edges.clear()
@@ -57,7 +59,8 @@ def rasterize():
         for i in arange(top.y, low.y, 0.1):
             canvas.create_line(w-top.x-100, h+top.y+i, w-top.x+100, h+top.y+i, fill="#F6aa72", width=2.5)        
         
-    
+
+# unused
 def drawEdges():
     for e in edges:
         p1 = Point2D.getById(e.point1, vertices2D)
@@ -65,44 +68,34 @@ def drawEdges():
         canvas.create_line(w-p1.x, h+p1.y, w-p2.x, h+p2.y, fill="#F64C72", width=2.5)
 
 
+def drawLine(x1, y1, x2, y2):
+        canvas.create_line(w-x1, h+y1, w-x2, h+y2, fill="#F64C72", width=2.5)
+
+        
 def drawFrame():
-    canvas.delete("all")
-    computeVerticesTransformation()    
-    drawEdges()
-    rasterize()
-    
+    for t in n_triangles:
+        vertices2d.clear()        
+        for v in t:
+            x = (camera.x - v[0])/((-camera.z + v[2] + 100) * 0.001)
+            y = (camera.y - v[1])/((-camera.z + v[2] + 100) * 0.001)
+            vertices2d.append((x, y))
+
+
+        drawLine(vertices2d[0][0], vertices2d[0][1], vertices2d[1][0], vertices2d[1][1])
+        drawLine(vertices2d[0][0], vertices2d[0][1], vertices2d[2][0], vertices2d[2][1])
+        drawLine(vertices2d[1][0], vertices2d[1][1], vertices2d[2][0], vertices2d[2][1])
+
         
 def animateRotation():
-    rotate(0.008, 0.002, vertices)
+    canvas.delete("all")    
+    rotate(triangles)
     drawFrame()
     canvas.after(20, animateRotation)
 
 
 def loadModel():
-    for id, x, y, z in cube.points:
-        vertices.append(Point(id, x, y, z))
-
-    for a, b, c in cube.triangles:
-        triangles.append(Triangle(a, b, c))
-    
-
-def compute2dTransform():
-    edges.clear()
     for t in n_triangles:
-        n_vertices2d.clear()        
-        for v in t:
-            x = (camera.x - v[0])/((-camera.z + v[2] + 100) * 0.001)
-            y = (camera.y - v[1])/((-camera.z + v[2] + 100) * 0.001)
-            n_vertices2d.append((x, y))
-
-        
-        canvas.create_line(w-n_vertices2d[0][0], h+n_vertices2d[0][1], w-n_vertices2d[1][0], h+n_vertices2d[1][1], fill="#F64C72", width=2.5)
-        canvas.create_line(w-n_vertices2d[0][0], h+n_vertices2d[0][1], w-n_vertices2d[2][0], h+n_vertices2d[2][1], fill="#F64C72", width=2.5)
-        canvas.create_line(w-n_vertices2d[1][0], h+n_vertices2d[1][1], w-n_vertices2d[2][0], h+n_vertices2d[2][1], fill="#F64C72", width=2.5)                
-        # edges.append(Edge(t.point1, t.point2))
-        # edges.append(Edge(t.point1, t.point3))
-        # edges.append(Edge(t.point2, t.point3))
-    
+        triangles.append(t)
         
 
 if __name__ == '__main__':
@@ -116,30 +109,16 @@ if __name__ == '__main__':
     camX = 60 ; camY = 10 ; camZ = 5
     camera = camera.Camera(camX, camY, camZ)
 
-    origin = Point(0, 0, 0, 0)
-    xVersor = Point(97, 10, 0, 0)
-    yVersor = Point(98, 0, 10, 0)
-    zVersor = Point(99, 0, 0, 10)
-    ox = Edge(origin.id, xVersor.id)
-    oy = Edge(origin.id, yVersor.id)
-    oz = Edge(origin.id, zVersor.id)
-    
-    vertices = [ origin ]
+    #vertices = [ origin ]
     vertices2D = []
     triangles = []
     edges = []
 
-    #    loadModel()
-    vertices3d = []
-    n_vertices2d = []
-    for t in n_triangles:
-        triangles.append(t)
+    vertices3d = [] # not used for now
+    vertices2d = []
 
-    rotatet(triangles)
-
-    compute2dTransform()
-    
-  #  animateRotation()
+    loadModel()
+    animateRotation()
         
     root.mainloop()
     
