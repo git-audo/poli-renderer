@@ -2,8 +2,10 @@
 
 from tkinter import *
 from models import cube
+from models.cube import n_triangles
 import camera, time, math
-from geometry import Point2D, Point, Edge, Triangle, rotate
+from geometry import Point2D, Point, Edge, Triangle, rotate, rotatet
+from numpy import arange
 
 def computeVerticesTransformation():
     vertices2D.clear()
@@ -34,21 +36,26 @@ def rasterize():
         triangleVertices.append(Point2D.getById(t.point3, vertices))
 
         top = Point2D('top', 0, -999)
-        low1 = Point2D('low', 0, 999)
-        low2 = Point2D('low', 0, 999)        
+        low = Point2D('low', 0, 999)
+        mid = Point2D('low', 0, 999)        
         for v in vertices2D:
             if v.id == t.point1 or v.id == t.point2 or v.id == t.point3:
                 if v.y > top.y:
                     top = v
-                elif v.y < low1.y and low1.y == 999:
-                    low1 = v
-                elif v.y < low2.y:
-                    low2 = v
+                elif v.y < low.y:
+                    if low.y != 999:
+                        mid = low
+                    low = v
+                else:
+                    mid = v
 
 
-        half = Point2D('half', top.x, math.floor((low1.y + low2.y)/2))
+        half = Point2D('half', top.x, math.floor((low.y + mid.y)/2))
         canvas.create_line(w-top.x, h+top.y, w-half.x, h+half.y, fill="#F6aa72", width=2.5)        
 
+        print(top.y, mid.y)
+        for i in arange(top.y, low.y, 0.1):
+            canvas.create_line(w-top.x-100, h+top.y+i, w-top.x+100, h+top.y+i, fill="#F6aa72", width=2.5)        
         
     
 def drawEdges():
@@ -79,6 +86,24 @@ def loadModel():
         triangles.append(Triangle(a, b, c))
     
 
+def compute2dTransform():
+    edges.clear()
+    for t in n_triangles:
+        n_vertices2d.clear()        
+        for v in t:
+            x = (camera.x - v[0])/((-camera.z + v[2] + 100) * 0.001)
+            y = (camera.y - v[1])/((-camera.z + v[2] + 100) * 0.001)
+            n_vertices2d.append((x, y))
+
+        
+        canvas.create_line(w-n_vertices2d[0][0], h+n_vertices2d[0][1], w-n_vertices2d[1][0], h+n_vertices2d[1][1], fill="#F64C72", width=2.5)
+        canvas.create_line(w-n_vertices2d[0][0], h+n_vertices2d[0][1], w-n_vertices2d[2][0], h+n_vertices2d[2][1], fill="#F64C72", width=2.5)
+        canvas.create_line(w-n_vertices2d[1][0], h+n_vertices2d[1][1], w-n_vertices2d[2][0], h+n_vertices2d[2][1], fill="#F64C72", width=2.5)                
+        # edges.append(Edge(t.point1, t.point2))
+        # edges.append(Edge(t.point1, t.point3))
+        # edges.append(Edge(t.point2, t.point3))
+    
+        
 
 if __name__ == '__main__':
     root = Tk()
@@ -88,7 +113,7 @@ if __name__ == '__main__':
     canvas = Canvas(root, width=1200, height=600, bg="#282828")
     canvas.pack()
 
-    camX = 90 ; camY = -50 ; camZ = -130
+    camX = 60 ; camY = 10 ; camZ = 5
     camera = camera.Camera(camX, camY, camZ)
 
     origin = Point(0, 0, 0, 0)
@@ -104,8 +129,17 @@ if __name__ == '__main__':
     triangles = []
     edges = []
 
-    loadModel()
-    animateRotation()
+    #    loadModel()
+    vertices3d = []
+    n_vertices2d = []
+    for t in n_triangles:
+        triangles.append(t)
+
+    rotatet(triangles)
+
+    compute2dTransform()
+    
+  #  animateRotation()
         
     root.mainloop()
     

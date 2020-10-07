@@ -45,3 +45,7 @@ def rotate(modelRotateY, modelRotateX, vertices):
         v.z = -math.sin(modelRotateX)*y + math.cos(modelRotateX)*v.z
 
 
+def rotatet(triangles):
+    for t in triangles:
+        for v in t:
+            print(v)
