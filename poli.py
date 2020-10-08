@@ -42,7 +42,8 @@ def edgeFunction(x1, y1, x2, y2, p1, p2):
 def rasterize(v):
     for i in range(0, math.floor(w), 30):
             for j in range(0, math.floor(h), 30):
-                if edgeFunction(v[0][0], v[0][1], v[1][0], v[1][1], i, j):
+                if edgeFunction(v[0][0], v[0][1], v[1][0], v[1][1], i, j)
+                  and edgeFunction(v[0][0], v[0][1], v[2][0], v[2][1], i, j)
                     canvas.create_oval(i, j, i, j, width=4, outline="#F64C72")                         
 
     
