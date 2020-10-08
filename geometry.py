@@ -34,8 +34,8 @@ class Triangle:
 
 
 def rotate(triangles):
-    modelRotateY = 0.002
-    modelRotateX = 0.004
+    modelRotateY = 0.004
+    modelRotateX = 0.002
     for t in triangles:
         for v in t:
             x = v[0]

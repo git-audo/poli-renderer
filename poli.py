@@ -30,43 +30,44 @@ def computeVerticesTransformation():
         edges.append(Edge(t.point2, t.point3))
 
 
-def rasterize():
-    for t in triangles:
-        triangleVertices = []
-        triangleVertices.append(Point2D.getById(t.point1, vertices))
-        triangleVertices.append(Point2D.getById(t.point2, vertices))
-        triangleVertices.append(Point2D.getById(t.point3, vertices))
-
-        top = Point2D('top', 0, -999)
-        low = Point2D('low', 0, 999)
-        mid = Point2D('low', 0, 999)        
-        for v in vertices2D:
-            if v.id == t.point1 or v.id == t.point2 or v.id == t.point3:
-                if v.y > top.y:
-                    top = v
-                elif v.y < low.y:
-                    if low.y != 999:
-                        mid = low
-                    low = v
-                else:
-                    mid = v
-
-
-        half = Point2D('half', top.x, math.floor((low.y + mid.y)/2))
-        canvas.create_line(w-top.x, h+top.y, w-half.x, h+half.y, fill="#F6aa72", width=2.5)        
-
-        print(top.y, mid.y)
-        for i in arange(top.y, low.y, 0.1):
-            canvas.create_line(w-top.x-100, h+top.y+i, w-top.x+100, h+top.y+i, fill="#F6aa72", width=2.5)        
         
+def edgeFunction(x1, y1, x2, y2, p1, p2):
+    cond = ((p1-x1)*(y2-y1)-(p2-y1)*(x2-x1))
+    if cond > 0:
+        return False
+    else:
+        return True
 
-# unused
-def drawEdges():
-    for e in edges:
-        p1 = Point2D.getById(e.point1, vertices2D)
-        p2 = Point2D.getById(e.point2, vertices2D)
-        canvas.create_line(w-p1.x, h+p1.y, w-p2.x, h+p2.y, fill="#F64C72", width=2.5)
+    
+def rasterize(v):
+    for i in range(0, math.floor(w), 30):
+            for j in range(0, math.floor(h), 30):
+                if edgeFunction(v[0][0], v[0][1], v[1][0], v[1][1], i, j):
+                    canvas.create_oval(i, j, i, j, width=4, outline="#F64C72")                         
 
+    
+        # top = Point2D('top', 0, -999)
+        # low = Point2D('low', 0, 999)
+        # mid = Point2D('low', 0, 999)        
+        # for v in vertices:
+        #     if v.id == t.point1 or v.id == t.point2 or v.id == t.point3:
+        #         if v.y > top.y:
+        #             top = v
+        #         elif v.y < low.y:
+        #             if low.y != 999:
+        #                 mid = low
+        #                 low = v
+        #         else:
+        #             mid = v
+
+
+        # half = Point2D('half', top.x, math.floor((low.y + mid.y)/2))
+        # canvas.create_line(w-top.x, h+top.y, w-half.x, h+half.y, fill="#F6aa72", width=2.5)        
+
+        # print(top.y, mid.y)
+        # for i in arange(top.y, low.y, 0.1):
+        #     canvas.create_line(w-top.x-100, h+top.y+i, w-top.x+100, h+top.y+i, fill="#F6aa72", width=2.5)        
+        
 
 def drawLine(x1, y1, x2, y2):
         canvas.create_line(w-x1, h+y1, w-x2, h+y2, fill="#F64C72", width=2.5)
@@ -74,7 +75,8 @@ def drawLine(x1, y1, x2, y2):
         
 def drawFrame():
     for t in n_triangles:
-        vertices2d.clear()        
+        vertices2d.clear()
+        # for each triangle vertex compute the trasformation from 3d space to 2d space
         for v in t:
             x = (camera.x - v[0])/((-camera.z + v[2] + 100) * 0.001)
             y = (camera.y - v[1])/((-camera.z + v[2] + 100) * 0.001)
@@ -85,9 +87,11 @@ def drawFrame():
         drawLine(vertices2d[0][0], vertices2d[0][1], vertices2d[2][0], vertices2d[2][1])
         drawLine(vertices2d[1][0], vertices2d[1][1], vertices2d[2][0], vertices2d[2][1])
 
+        rasterize(vertices2d)
+
         
 def animateRotation():
-    canvas.delete("all")    
+    canvas.delete("all")
     rotate(triangles)
     drawFrame()
     canvas.after(20, animateRotation)
