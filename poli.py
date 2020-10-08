@@ -34,40 +34,16 @@ def computeVerticesTransformation():
 def edgeFunction(x1, y1, x2, y2, p1, p2):
     cond = ((p1-x1)*(y2-y1)-(p2-y1)*(x2-x1))
     if cond > 0:
-        return False
-    else:
         return True
+    else:
+        return False
 
     
 def rasterize(v):
-    for i in range(0, math.floor(w), 30):
-            for j in range(0, math.floor(h), 30):
-                if edgeFunction(v[0][0], v[0][1], v[1][0], v[1][1], i, j)
-                  and edgeFunction(v[0][0], v[0][1], v[2][0], v[2][1], i, j)
-                    canvas.create_oval(i, j, i, j, width=4, outline="#F64C72")                         
-
-    
-        # top = Point2D('top', 0, -999)
-        # low = Point2D('low', 0, 999)
-        # mid = Point2D('low', 0, 999)        
-        # for v in vertices:
-        #     if v.id == t.point1 or v.id == t.point2 or v.id == t.point3:
-        #         if v.y > top.y:
-        #             top = v
-        #         elif v.y < low.y:
-        #             if low.y != 999:
-        #                 mid = low
-        #                 low = v
-        #         else:
-        #             mid = v
-
-
-        # half = Point2D('half', top.x, math.floor((low.y + mid.y)/2))
-        # canvas.create_line(w-top.x, h+top.y, w-half.x, h+half.y, fill="#F6aa72", width=2.5)        
-
-        # print(top.y, mid.y)
-        # for i in arange(top.y, low.y, 0.1):
-        #     canvas.create_line(w-top.x-100, h+top.y+i, w-top.x+100, h+top.y+i, fill="#F6aa72", width=2.5)        
+    for i in range(-100, 900, 10):
+        for j in range(-500, 50, 10):
+            if edgeFunction(v[0][0], v[0][1], v[1][0], v[1][1], i, j) and edgeFunction(v[2][0], v[2][1], v[0][0], v[0][1], i, j) and edgeFunction(v[1][0], v[1][1], v[2][0], v[2][1], i, j):
+                canvas.create_oval(w-i, h+j, w-i, h+j, width=1, outline="#F6aa72")
         
 
 def drawLine(x1, y1, x2, y2):
@@ -87,7 +63,6 @@ def drawFrame():
         drawLine(vertices2d[0][0], vertices2d[0][1], vertices2d[1][0], vertices2d[1][1])
         drawLine(vertices2d[0][0], vertices2d[0][1], vertices2d[2][0], vertices2d[2][1])
         drawLine(vertices2d[1][0], vertices2d[1][1], vertices2d[2][0], vertices2d[2][1])
-
         rasterize(vertices2d)
 
         
@@ -95,7 +70,7 @@ def animateRotation():
     canvas.delete("all")
     rotate(triangles)
     drawFrame()
-    canvas.after(20, animateRotation)
+    canvas.after(30, animateRotation)
 
 
 def loadModel():
@@ -111,7 +86,7 @@ if __name__ == '__main__':
     canvas = Canvas(root, width=1200, height=600, bg="#282828")
     canvas.pack()
 
-    camX = 60 ; camY = 10 ; camZ = 5
+    camX = 60 ; camY = 0 ; camZ = -10
     camera = camera.Camera(camX, camY, camZ)
 
     #vertices = [ origin ]
@@ -124,6 +99,6 @@ if __name__ == '__main__':
 
     loadModel()
     animateRotation()
-        
+
     root.mainloop()
     
