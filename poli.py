@@ -39,11 +39,19 @@ def edgeFunction(x1, y1, x2, y2, p1, p2):
         return False
 
     
-def rasterize(v):
+def rasterize(v, c):
+    colors = [
+        "#f6aa72",
+        "#ffaaff",
+        "#aaaaaa",
+    ]
+    
     for i in range(-100, 900, 10):
         for j in range(-500, 50, 10):
-            if edgeFunction(v[0][0], v[0][1], v[1][0], v[1][1], i, j) and edgeFunction(v[2][0], v[2][1], v[0][0], v[0][1], i, j) and edgeFunction(v[1][0], v[1][1], v[2][0], v[2][1], i, j):
-                canvas.create_oval(w-i, h+j, w-i, h+j, width=1, outline="#F6aa72")
+            if (edgeFunction(v[0][0], v[0][1], v[1][0], v[1][1], i, j) and
+                edgeFunction(v[2][0], v[2][1], v[0][0], v[0][1], i, j) and
+                edgeFunction(v[1][0], v[1][1], v[2][0], v[2][1], i, j)):
+                canvas.create_oval(w-i, h+j, w-i, h+j, width=4, outline=colors[c%3])
         
 
 def drawLine(x1, y1, x2, y2):
@@ -51,7 +59,7 @@ def drawLine(x1, y1, x2, y2):
 
         
 def drawFrame():
-    for t in n_triangles:
+    for i, t in enumerate(n_triangles):
         vertices2d.clear()
         # for each triangle vertex compute the trasformation from 3d space to 2d space
         for v in t:
@@ -63,14 +71,14 @@ def drawFrame():
         drawLine(vertices2d[0][0], vertices2d[0][1], vertices2d[1][0], vertices2d[1][1])
         drawLine(vertices2d[0][0], vertices2d[0][1], vertices2d[2][0], vertices2d[2][1])
         drawLine(vertices2d[1][0], vertices2d[1][1], vertices2d[2][0], vertices2d[2][1])
-        rasterize(vertices2d)
+        rasterize(vertices2d, i)
 
         
 def animateRotation():
     canvas.delete("all")
     rotate(triangles)
     drawFrame()
-    canvas.after(30, animateRotation)
+    canvas.after(20, animateRotation)
 
 
 def loadModel():
@@ -86,7 +94,7 @@ if __name__ == '__main__':
     canvas = Canvas(root, width=1200, height=600, bg="#282828")
     canvas.pack()
 
-    camX = 60 ; camY = 0 ; camZ = -10
+    camX = 60 ; camY = 0 ; camZ = 10
     camera = camera.Camera(camX, camY, camZ)
 
     #vertices = [ origin ]
