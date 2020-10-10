@@ -33,18 +33,27 @@ class Triangle:
         self.point3 = point3
 
 
+def translate(dx, dy, dz):
+    for t in triangles:
+        for v in t:
+            v[0] = v[0] + dx
+            v[1] = v[1] + dy
+            v[2] = v[2] + dz
+        
+
 def rotate(triangles):
     modelRotateY = 0.020
-    modelRotateX = -0.018
+    modelRotateX = 0.020
     for t in triangles:
         for v in t:
             x = v[0]
             y = v[1]
+            z = v[2]
             
-            v[0] = math.cos(modelRotateY)*v[0] + math.sin(modelRotateY)*v[2] 
-            v[2] = -math.sin(modelRotateY)*x + math.cos(modelRotateY)*v[2]
+            v[0] = math.cos(modelRotateY)*x + math.sin(modelRotateY)*z
+            v[2] = -math.sin(modelRotateY)*x + math.cos(modelRotateY)*z
             
-            v[1] = math.cos(modelRotateX)*v[1] + math.sin(modelRotateX)*v[2]
+            v[1] = math.cos(modelRotateX)*y + math.sin(modelRotateX)*v[2]
             v[2] = -math.sin(modelRotateX)*y + math.cos(modelRotateX)*v[2]
 
             

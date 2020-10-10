@@ -39,15 +39,15 @@ def edgeFunction(x1, y1, x2, y2, p1, p2):
         return False
 
     
-def rasterize(v, c):
+def rasterize(v, c, res):
     colors = [
         "#f6aa72",
         "#ffaaff",
         "#aaaaaa",
     ]
     
-    for i in range(-100, 900, 10):
-        for j in range(-500, 50, 10):
+    for i in range(-100, 900, res):
+        for j in range(-500, 50, res):
             if (edgeFunction(v[0][0], v[0][1], v[1][0], v[1][1], i, j) and
                 edgeFunction(v[2][0], v[2][1], v[0][0], v[0][1], i, j) and
                 edgeFunction(v[1][0], v[1][1], v[2][0], v[2][1], i, j)):
@@ -59,7 +59,7 @@ def drawLine(x1, y1, x2, y2):
 
         
 def drawFrame():
-    for i, t in enumerate(n_triangles):
+    for i, t in enumerate(triangles):
         vertices2d.clear()
         # for each triangle vertex compute the trasformation from 3d space to 2d space
         for v in t:
@@ -71,12 +71,13 @@ def drawFrame():
         drawLine(vertices2d[0][0], vertices2d[0][1], vertices2d[1][0], vertices2d[1][1])
         drawLine(vertices2d[0][0], vertices2d[0][1], vertices2d[2][0], vertices2d[2][1])
         drawLine(vertices2d[1][0], vertices2d[1][1], vertices2d[2][0], vertices2d[2][1])
-        rasterize(vertices2d, i)
+        rasterize(vertices2d, i, 5)
 
         
 def animateRotation():
     canvas.delete("all")
-    rotate(triangles)
+    #rotate(triangles)
+    translate(0.02, 0.02, 0.0)
     drawFrame()
     canvas.after(20, animateRotation)
 
@@ -86,6 +87,14 @@ def loadModel():
         triangles.append(t)
         
 
+def translate(dx, dy, dz):
+    for t in triangles:
+        for v in t:
+            v[0] = v[0] + dx
+            v[1] = v[1] + dy
+            v[2] = v[2] + dz
+    
+        
 if __name__ == '__main__':
     root = Tk()
     w = root.winfo_screenwidth()/2
@@ -94,7 +103,7 @@ if __name__ == '__main__':
     canvas = Canvas(root, width=1200, height=600, bg="#282828")
     canvas.pack()
 
-    camX = 60 ; camY = 0 ; camZ = 10
+    camX = 25 ; camY = -10 ; camZ = 30
     camera = camera.Camera(camX, camY, camZ)
 
     #vertices = [ origin ]
