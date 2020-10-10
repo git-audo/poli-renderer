@@ -4,7 +4,7 @@ from tkinter import *
 from models import cube
 from models.cube import n_triangles
 import camera, time, math
-from geometry import Point2D, Point, Edge, Triangle, rotate
+from geometry import Point2D, Point, Edge, Triangle, rotate, translate
 from numpy import arange
 
 
@@ -47,15 +47,15 @@ def rasterize(v, c, res):
     ]
     
     for i in range(-100, 900, res):
-        for j in range(-500, 50, res):
+        for j in range(-500, 50, res):  
             if (edgeFunction(v[0][0], v[0][1], v[1][0], v[1][1], i, j) and
                 edgeFunction(v[2][0], v[2][1], v[0][0], v[0][1], i, j) and
                 edgeFunction(v[1][0], v[1][1], v[2][0], v[2][1], i, j)):
-                canvas.create_oval(w-i, h+j, w-i, h+j, width=4, outline=colors[c%3])
+                canvas.create_oval(w/2+i, h/2+j, w/2+i, h/2+j, width=4, outline=colors[c%3])
         
 
 def drawLine(x1, y1, x2, y2):
-        canvas.create_line(w-x1, h+y1, w-x2, h+y2, fill="#F64C72", width=2.5)
+        canvas.create_line(w/2+x1, h/2+y1, w/2+x2, h/2+y2, fill="#F64C72", width=2.5)
 
         
 def drawFrame():
@@ -71,13 +71,13 @@ def drawFrame():
         drawLine(vertices2d[0][0], vertices2d[0][1], vertices2d[1][0], vertices2d[1][1])
         drawLine(vertices2d[0][0], vertices2d[0][1], vertices2d[2][0], vertices2d[2][1])
         drawLine(vertices2d[1][0], vertices2d[1][1], vertices2d[2][0], vertices2d[2][1])
-        rasterize(vertices2d, i, 5)
+        rasterize(vertices2d, i, 10)
 
         
 def animateRotation():
     canvas.delete("all")
-    #rotate(triangles)
-    translate(0.02, 0.02, 0.0)
+    rotate(triangles)
+    #translate(triangles, 0.02, 0.02, 0.0)
     drawFrame()
     canvas.after(20, animateRotation)
 
@@ -87,23 +87,15 @@ def loadModel():
         triangles.append(t)
         
 
-def translate(dx, dy, dz):
-    for t in triangles:
-        for v in t:
-            v[0] = v[0] + dx
-            v[1] = v[1] + dy
-            v[2] = v[2] + dz
-    
-        
 if __name__ == '__main__':
     root = Tk()
-    w = root.winfo_screenwidth()/2
-    h = root.winfo_screenheight()/2
+    w = root.winfo_screenwidth()/1.5
+    h = root.winfo_screenheight()/1.5
     root.wm_attributes("-type", "splash")
-    canvas = Canvas(root, width=1200, height=600, bg="#282828")
+    canvas = Canvas(root, width=w, height=h, bg="#282828")
     canvas.pack()
 
-    camX = 25 ; camY = -10 ; camZ = 30
+    camX = 0 ; camY = 0 ; camZ = -10
     camera = camera.Camera(camX, camY, camZ)
 
     #vertices = [ origin ]
