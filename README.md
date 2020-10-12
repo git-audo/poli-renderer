@@ -5,3 +5,4 @@ A software rasterizer I'm building to understand the foundations of software ren
 <br>I plan on improving this basic version with additional features like triangle rasterization and realistic lighting.
 
 !["Renderer output"](demo.png)
+!["Renderer output"](demo2.png)
